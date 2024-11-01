@@ -2,43 +2,65 @@
 File backup application to backup files from computer to external hard drive, synchronize changes, validate backup integrity using data checksums and much more.
 
 # Features
-- [ ] Configuration file to provide input
-- [ ] Skip disabled mappings
-- [ ] Full backup mode (default)
-- [ ] Synchronization mode (only copy changed files):
+- [ ] Configuration file
+- [ ] Input via command line arguments
+- [ ] Backup mode (default):
+  - [ ] Omission of disabled backups
+  - [ ] Full backup strategy to copy all files (default)
+  - [ ] Synchronization strategy to copy only changed files:
     - [ ] Detection of changed files based on last modified time, size and checksums
     - [ ] Detection of moved files to increase performance (different location on destination)
-- [ ] Deletion of destination files missing from source
-- [ ] Archival of destination files missing from source into separate recycle bin directory
+  - [ ] Copy validation using size and checksums
+  - [ ] Atomic-IO operations (no backup data is lost on system failure)
+  - [ ] Storage of file-level checksums on disk
+  - [ ] Storage of last backup and last file processed in lock file
+  - [ ] Deletion of destination files missing from source
+  - [ ] Archival of destination files missing from source to archival directory
+  - [ ] Backup schedules
+- [ ] Restore mode:
+  - [ ] Omission of unselected backups
+  - [ ] Full backup strategy to copy all files (default)
+  - [ ] Synchronization strategy to copy only changed files:
+    - [ ] Detection of changed files based on last modified time, size and checksums
+    - [ ] Detection of moved files to increase performance (different location on destination)
+  - [ ] Copy validation using size and checksums
+  - [ ] Atomic-IO operations (no backup data is lost on system failure)
+  - [ ] Storage of last backup and last file processed in lock file
 - [ ] Integrity validation mode:
-    - [ ] Storage of file-level checksums on disk
-    - [ ] Full backup integrity validation using checksums stored on disk
-    - [ ] Single file backup integrity validation using checksums stored on disk
-- [ ] Restore mode (full or synchronization)
-- [ ] Atomic-IO operations (so that no backup data is lost on system failure)
+  - [ ] Omission of unselected backups
+  - [ ] Full backup integrity validation using checksums stored on disk
+  - [ ] File list backup integrity validation using checksums stored on disk
 - [ ] Crash recovery:
-    - [ ] Storage of last mapping and last file processed in lock file
-    - [ ] Automatic crash detection based on lock file
-    - [ ] Automatic resumption based on lock file
-- [ ] Copy validation using size and checksums
+  - [ ] Automatic crash detection based on lock file
+  - [ ] Automatic resumption based on lock file
 - [ ] File-level logging into separate logfiles per operation
-- [ ] Scheduling backups
+- [ ] Command line user interface (LUI)
 - [ ] Graphical user interface (GUI)
 
 # Configuration
-- Configuration options:
-    - source <-> destination mappings:
-        - Source location
-        - Destination location
-        - Activation (allow to disable temporarily)
-        - Full backup mode or synchronization mode
-        - Deletion or archival of destination files missing from source
-        - Integrity validation mode (check files instead of backing up files)
-        - Restore mode
-        - Backup schedule
-    - List of individual files to validate integrity for
-    - Logfile
-    - Checksum file
-    - Lock file
-    - Recycle bin directory
-    - Global backup schedule
+YAML application configuration file with the following options:
+- Backups (source <-> destination mappings):
+  - Source location
+  - Destination location
+  - Backup mode:
+    - Activation of backup
+    - Backup strategy: Full backup or synchronization
+    - Destination files missing from source: deletion or archival
+    - Backup schedule
+  - Restore mode:
+    - Selection for restore mode
+    - Restore strategy: Full backup or synchronization
+  - Integrity validation mode: 
+    - Selection for integrity validation mode
+- Archival directory
+- Checksum file
+- Lock file
+- Logfile
+
+# Command line arguments
+The following positional command line arguments are accepted:
+
+| Position | Name                           | Value                         | Remarks                           |
+| -------- |--------------------------------|-------------------------------|-----------------------------------|
+| 1        | Mode                           | BACKUP \| RESTORE \| VALIDATE |                                   |
+| 2        | Integrity validation file list | YAML file with list of files  | Only when mode is set to VALIDATE |
