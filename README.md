@@ -45,7 +45,7 @@ YAML application configuration file with the following options:
   - Backup mode:
     - Activation of backup
     - Backup strategy: Full backup or synchronization
-    - Destination files missing from source: deletion or archival
+    - Destination files missing from source: retain, delete or archive
     - Backup schedule
   - Restore mode:
     - Selection for restore mode
@@ -55,7 +55,11 @@ YAML application configuration file with the following options:
 - Archival directory
 - Checksum file
 - Lock file
-- Logfile
+
+## Backup schedule
+Make use of Quartz scheduler:
+- Allow setting pre-defined schedules
+- Allow setting cron expressions (For more flexibility)
 
 # Command line arguments
 The following positional command line arguments are accepted:

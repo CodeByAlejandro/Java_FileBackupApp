@@ -1,4 +1,4 @@
-package org.codebyalejandro;
+package org.codebyalejandro.FileBackupApp;
 
 /**
  * Hello world!

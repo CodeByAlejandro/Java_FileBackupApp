@@ -1,4 +1,4 @@
-package org.codebyalejandro;
+package org.codebyalejandro.FileBackupApp;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
