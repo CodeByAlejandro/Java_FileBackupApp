@@ -65,7 +65,7 @@ YAML application configuration file with the following options:
 # Command line arguments
 The following positional command line arguments are accepted:
 
-| Position | Name                           | Value                         | Remarks                           |
-| -------- |--------------------------------|-------------------------------|-----------------------------------|
-| 1        | Mode                           | BACKUP \| RESTORE \| VALIDATE |                                   |
-| 2        | Integrity validation file list | YAML file with list of files  | Only when mode is set to VALIDATE |
+| Position | Name                           | Value                                    | Remarks                           |
+| -------- |--------------------------------|------------------------------------------|-----------------------------------|
+| 1        | Mode                           | BACKUP \| RESTORE \| VALIDATE \| SERVICE |                                   |
+| 2        | Integrity validation file list | YAML file with list of files             | Only when mode is set to VALIDATE |
