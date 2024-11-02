@@ -17,6 +17,12 @@ File backup application to backup files from computer to external hard drive, sy
   - [ ] Deletion of destination files missing from source
   - [ ] Archival of destination files missing from source to archival directory
   - [ ] Backup schedules
+    - [ ] Backup service running in background
+    - [ ] Pre-defined schedules
+    - [ ] Cron expressions (For more flexibility)
+    - [ ] Pause scheduler on manual backup operation
+    - [ ] Prevention of simultaneous backups for same directories
+    - [ ] Handling of misfires due to system shutdown or CPU occupied
 - [ ] Restore mode:
   - [ ] Omission of unselected backups
   - [ ] Full backup strategy to copy all files (default)
@@ -55,11 +61,6 @@ YAML application configuration file with the following options:
 - Archival directory
 - Checksum file
 - Lock file
-
-## Backup schedule
-Make use of Quartz scheduler:
-- Allow setting pre-defined schedules
-- Allow setting cron expressions (For more flexibility)
 
 # Command line arguments
 The following positional command line arguments are accepted:
