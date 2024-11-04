@@ -1,4 +1,6 @@
-package org.codebyalejandro.FileBackupApp.configuration.validation;
+package org.codebyalejandro.FileBackupApp.configuration;
+
+import org.codebyalejandro.FileBackupApp.configuration.validation.ValidationMessage;
 
 import java.util.List;
 
