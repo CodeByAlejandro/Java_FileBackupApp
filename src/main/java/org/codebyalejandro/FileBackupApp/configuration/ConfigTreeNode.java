@@ -4,24 +4,24 @@ import org.codebyalejandro.FileBackupApp.configuration.validation.ValidationMess
 
 import java.util.List;
 
-public abstract class ConfigElement {
+public abstract class ConfigTreeNode {
 	private String name;
 	private List<ValidationMessage> validationMessages;
-	private List<ConfigElement> children;
+	private List<ConfigTreeNode> children;
 
 	// ----------- CONSTRUCTORS
-	public ConfigElement(String name) {
+	public ConfigTreeNode(String name) {
 		setName(name);
 		setChildren(null);
 		setValidationMessages(null);
 	}
 
-	public ConfigElement(String name, List<ValidationMessage> validationMessages) {
+	public ConfigTreeNode(String name, List<ValidationMessage> validationMessages) {
 		this(name);
 		setValidationMessages(validationMessages);
 	}
 
-	public ConfigElement(String name, List<ValidationMessage> validationMessages, List<ConfigElement> children) {
+	public ConfigTreeNode(String name, List<ValidationMessage> validationMessages, List<ConfigTreeNode> children) {
 		this(name, validationMessages);
 		setChildren(children);
 	}
@@ -35,11 +35,11 @@ public abstract class ConfigElement {
 		this.name = name;
 	}
 
-	public List<ConfigElement> getChildren() {
+	public List<ConfigTreeNode> getChildren() {
 		return children;
 	}
 
-	public void setChildren(List<ConfigElement> children) {
+	public void setChildren(List<ConfigTreeNode> children) {
 		this.children = children;
 	}
 
@@ -60,11 +60,11 @@ public abstract class ConfigElement {
 		getValidationMessages().addAll(validationMessages);
 	}
 
-	public void addChild(ConfigElement child) {
+	public void addChild(ConfigTreeNode child) {
 		getChildren().add(child);
 	}
 
-	public void addAllChildren(List<ConfigElement> children) {
+	public void addAllChildren(List<ConfigTreeNode> children) {
 		getChildren().addAll(children);
 	}
 
@@ -90,7 +90,7 @@ public abstract class ConfigElement {
 		boolean appendedStrBuilder = false;
 		strBuilder.append("\t".repeat(depth)).append(getName()).append(":").append(System.lineSeparator());
 		depth += 1;
-		for (ConfigElement child : getChildren()) {
+		for (ConfigTreeNode child : getChildren()) {
 			boolean childAppendedStrBuilder = child.getCompositeValidationMessage(strBuilder, depth);
 			if (childAppendedStrBuilder) {
 				appendedStrBuilder = true;
