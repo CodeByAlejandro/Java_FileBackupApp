@@ -49,7 +49,7 @@ File backup application to backup files from computer to external hard drive, sy
 YAML application configuration file with the following structure:
 - Backups (source ↔ backup mappings):
   - Source location
-  - Destination location
+  - Backup location
   - Backup mode:
     - Activation of backup: Enabled | Disabled
     - Backup strategy: Full | Synchronization
@@ -86,3 +86,4 @@ The following positional command line arguments are accepted:
 | -------- |--------------------------------|------------------------------------------|-----------------------------------|
 | 1        | Mode                           | BACKUP \| RESTORE \| VALIDATE \| SERVICE | SERVICE starts background service |
 | 2        | Integrity validation file list | YAML file with list of files             | Only when mode is set to VALIDATE |
+

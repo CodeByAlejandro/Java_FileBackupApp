@@ -8,7 +8,7 @@ import java.nio.file.Path;
 
 public class BackupConfig {
 	private Path sourcePath;
-	private Path destinationPath;
+	private Path backupPath;
 	private BackupModeConfig backupMode;
 	private RestoreModeConfig restoreMode;
 	private ValidationModeConfig validationMode;
@@ -22,12 +22,12 @@ public class BackupConfig {
 		this.sourcePath = sourcePath;
 	}
 
-	public Path getDestinationPath() {
-		return destinationPath;
+	public Path getBackupPath() {
+		return backupPath;
 	}
 
-	public void setDestinationPath(Path destinationPath) {
-		this.destinationPath = destinationPath;
+	public void setBackupPath(Path backupPath) {
+		this.backupPath = backupPath;
 	}
 
 	public BackupModeConfig getBackupMode() {
