@@ -1,6 +1,9 @@
 # Java_FileBackupApp
 File backup application to backup files from computer to external hard drive, synchronize changes, restore backups, validate backup integrity using data checksums and much more.
 
+> [!IMPORTANT]
+> This project is in early development.
+
 # Features
 - [ ] Backup mode (default):
   - [ ] Omission of disabled backups
@@ -86,4 +89,5 @@ The following positional command line arguments are accepted:
 | -------- |--------------------------------|------------------------------------------|-----------------------------------|
 | 1        | Mode                           | BACKUP \| RESTORE \| VALIDATE \| SERVICE | SERVICE starts background service |
 | 2        | Integrity validation file list | YAML file with list of files             | Only when mode is set to VALIDATE |
+
 
