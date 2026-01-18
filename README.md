@@ -22,7 +22,7 @@ The application should be easy to use, reliable and support self-healing of corr
 - [ ] Fallback detection of changed files based on checksums (in case last modified time and file size are unchanged)
   - [ ] Policy for how to handle deviating checksums:
     - [ ] Log only (default)
-    - [ ] Handle as legal change and back up anyway
+    - [ ] Handle as legitimate change and back up anyway
     - [ ] Handle as corruption and self-heal using backup copy
   - [ ] Manual conflict resolution for deviating checksum conflicts not solved by policy (choose to do nothing (default) / back up anyway / self-heal using backup)
 - [ ] Detection of moved files to increase performance
@@ -158,4 +158,5 @@ The `validate-list <path>` command supports the following arguments:
 
 ## Help command arguments
 The `help [--command <command>]` command supports the following arguments:
+
   - `--command <command>`: Display help information about a specific command. If omitted, general help information is displayed.
