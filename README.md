@@ -1,6 +1,6 @@
 # BacMan
 
-File backup manager application to back up files from computer to external hard drive, synchronize changes, restore backups,
+Backup manager application to back up files from computer to external hard drive, synchronize changes, restore backups,
 validate backup integrity using data checksums and much more.
 
 > [!IMPORTANT]
@@ -44,5 +44,4 @@ validate backup integrity using data checksums and much more.
 # Implementation details
 
 - Store internal data in embedded database (SQLite)
-
 - Support `*`, `**`, `?` wildcards and trailing `/` to denote directories in exclude/include patterns
