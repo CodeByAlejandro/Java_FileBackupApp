@@ -1,6 +1,6 @@
 # BacMan
 
-Backup manager application to back up files from computer to external hard drive, synchronize changes, restore backups,
+Backup manager to back up files from computer to external hard drive, synchronize changes, restore backups,
 validate backup integrity using data checksums and much more.
 
 > [!IMPORTANT]
