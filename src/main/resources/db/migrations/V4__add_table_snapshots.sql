@@ -6,6 +6,10 @@ CREATE TABLE snapshots
 
     snapshot_path TEXT    NOT NULL,
 
+    type          INTEGER NOT NULL,
+    -- 0 = MANUAL
+    -- 1 = SCHEDULED
+
     active        INTEGER NOT NULL DEFAULT 0,
     -- 0 = INACTIVE
     -- 1 = ACTIVE
@@ -15,6 +19,7 @@ CREATE TABLE snapshots
 
     UNIQUE (snapshot_path),
     CHECK (snapshot_path != ''),
+    CHECK (type IN (0, 1)),
     CHECK (active IN (0, 1)),
 
     FOREIGN KEY (backup_id)
@@ -28,3 +33,6 @@ CREATE UNIQUE INDEX idx_snapshots_backup_active
 
 CREATE INDEX idx_snapshots_backup_created
     ON snapshots (backup_id, created_at);
+
+CREATE INDEX idx_snapshots_backup_type_created
+    ON snapshots (backup_id, type, created_at);
