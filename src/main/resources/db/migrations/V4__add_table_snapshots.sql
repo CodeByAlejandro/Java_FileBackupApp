@@ -6,21 +6,21 @@ CREATE TABLE snapshots
 
     snapshot_path TEXT    NOT NULL,
 
-    type          INTEGER NOT NULL,
+    origin        INTEGER NOT NULL,
     -- 0 = MANUAL
     -- 1 = SCHEDULED
 
-    active        INTEGER NOT NULL DEFAULT 0,
-    -- 0 = INACTIVE
-    -- 1 = ACTIVE
+    is_live       INTEGER NOT NULL DEFAULT 1,
+    -- 0 = HISTORICAL
+    -- 1 = LIVE
 
     created_at    INTEGER NOT NULL,
     updated_at    INTEGER NOT NULL,
 
     UNIQUE (snapshot_path),
     CHECK (snapshot_path != ''),
-    CHECK (type IN (0, 1)),
-    CHECK (active IN (0, 1)),
+    CHECK (origin IN (0, 1)),
+    CHECK (is_live IN (0, 1)),
 
     FOREIGN KEY (backup_id)
         REFERENCES backups (id)
@@ -28,11 +28,11 @@ CREATE TABLE snapshots
 );
 
 CREATE UNIQUE INDEX idx_snapshots_backup_active
-    ON snapshots (backup_id, active)
-    WHERE active = 1;
+    ON snapshots (backup_id, is_live)
+    WHERE is_live = 1;
 
 CREATE INDEX idx_snapshots_backup_created
     ON snapshots (backup_id, created_at);
 
 CREATE INDEX idx_snapshots_backup_type_created
-    ON snapshots (backup_id, type, created_at);
+    ON snapshots (backup_id, origin, created_at);
