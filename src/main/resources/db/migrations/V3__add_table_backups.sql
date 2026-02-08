@@ -17,8 +17,8 @@ CREATE TABLE backups
     -- 0 = DISABLED
     -- 1 = ENABLED
 
-    created_at                 INTEGER NOT NULL,
-    updated_at                 INTEGER NOT NULL,
+    created_at                 TEXT    NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    updated_at                 TEXT    NOT NULL,
 
     UNIQUE (backup_path),
     CHECK (source_path != ''),

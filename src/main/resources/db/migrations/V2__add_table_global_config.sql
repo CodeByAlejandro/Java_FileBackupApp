@@ -2,11 +2,11 @@ CREATE TABLE global_config
 (
     id                   INTEGER PRIMARY KEY,
 
-    log_directory_path   TEXT    NOT NULL,
+    log_directory_path   TEXT NOT NULL,
     database_backup_path TEXT,
 
-    created_at           INTEGER NOT NULL,
-    updated_at           INTEGER NOT NULL,
+    created_at           TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    updated_at           TEXT NOT NULL,
 
     CHECK (id = 1),
     CHECK (log_directory_path != ''),

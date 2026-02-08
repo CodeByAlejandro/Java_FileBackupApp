@@ -16,8 +16,8 @@ CREATE TABLE snapshot_configs
     snapshot_age_limit             INTEGER,
     snapshot_cumulative_size_limit INTEGER,
 
-    created_at                     INTEGER NOT NULL,
-    updated_at                     INTEGER NOT NULL,
+    created_at                     TEXT    NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    updated_at                     TEXT    NOT NULL,
 
     CHECK (tracking_policy IN (0, 1)),
     CHECK (hardlink_deduplication IN (0, 1)),

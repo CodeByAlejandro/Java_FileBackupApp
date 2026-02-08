@@ -14,8 +14,8 @@ CREATE TABLE path_filters
 
     order_index INTEGER NOT NULL,
 
-    created_at  INTEGER NOT NULL,
-    updated_at  INTEGER NOT NULL,
+    created_at  TEXT    NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    updated_at  TEXT    NOT NULL,
 
     UNIQUE (backup_id, path_filter),
     CHECK (path_filter != ''),

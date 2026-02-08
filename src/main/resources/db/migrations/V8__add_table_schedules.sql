@@ -10,16 +10,16 @@ CREATE TABLE schedules
     -- 0 = INACTIVE
     -- 1 = ACTIVE
 
-    next_run_at     INTEGER,
+    next_run_at     TEXT,
 
-    last_run_at     INTEGER,
+    last_run_at     TEXT,
     last_run_status INTEGER,
     -- 0 = IN_PROGRESS
     -- 1 = COMPLETED
     -- 2 = FAILED
 
-    created_at      INTEGER NOT NULL,
-    updated_at      INTEGER NOT NULL,
+    created_at      TEXT    NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    updated_at      TEXT    NOT NULL,
 
     UNIQUE (backup_id, cron_expression),
     CHECK (cron_expression != ''),

@@ -7,7 +7,7 @@ CREATE TABLE files
     -- Relative to snapshots.snapshot_path
     relative_path    TEXT    NOT NULL,
 
-    mtime            INTEGER NOT NULL,
+    mtime            TEXT    NOT NULL,
     size             INTEGER NOT NULL,
     checksum         BLOB    NOT NULL,
 
@@ -27,8 +27,8 @@ CREATE TABLE files
 
     last_verified_at INTEGER,
 
-    created_at       INTEGER NOT NULL,
-    updated_at       INTEGER NOT NULL,
+    created_at       TEXT    NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    updated_at       TEXT    NOT NULL,
 
     CHECK (size >= 0),
     CHECK (state IN (0, 1, 2, 3, 4)),

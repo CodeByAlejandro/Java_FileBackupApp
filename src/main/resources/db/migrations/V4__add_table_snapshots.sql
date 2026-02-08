@@ -14,8 +14,8 @@ CREATE TABLE snapshots
     -- 0 = HISTORICAL
     -- 1 = LIVE
 
-    created_at    INTEGER NOT NULL,
-    updated_at    INTEGER NOT NULL,
+    created_at    TEXT    NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+    updated_at    TEXT    NOT NULL,
 
     UNIQUE (snapshot_path),
     CHECK (snapshot_path != ''),
