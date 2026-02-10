@@ -71,16 +71,16 @@ public class DbManager {
 	private void runDdlFile(String ddlFilePath) {
 		try (Connection conn = dataSource.getConnection()) {
 
-			Transactional.inTransaction(conn, c -> {
+			Transactional.inTransaction(conn, () -> {
 				try (SqlFile sqlFile = new SqlFile(ddlFilePath)) {
-					for (String sqlStatement : sqlFile) {
-						try (Statement stmt = c.createStatement()) {
+					sqlFile.forEachStatement(sqlStatement -> {
+						try (Statement stmt = conn.createStatement()) {
 							stmt.execute(sqlStatement);
 						}
-					}
+					});
 				}
 
-				try (Statement stmt = c.createStatement()) {
+				try (Statement stmt = conn.createStatement()) {
 					stmt.executeUpdate(
 							"INSERT INTO db_migrations (migration_file) VALUES ('" + ddlFilePath + "')"
 					);
