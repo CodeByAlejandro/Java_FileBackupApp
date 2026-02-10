@@ -1,5 +1,6 @@
 package org.codebyalejandro.BacMan.database;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 public class SqlFile implements Iterable<String>, AutoCloseable {
@@ -17,7 +18,7 @@ public class SqlFile implements Iterable<String>, AutoCloseable {
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() throws IOException {
 		if (sqlFileIterator != null) {
 			sqlFileIterator.close();
 		}

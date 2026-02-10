@@ -69,13 +69,14 @@ public class DbManager {
 	}
 
 	private void runDdlFile(String ddlFilePath) {
-		try (Connection conn = dataSource.getConnection();
-			 SqlFile sqlFile = new SqlFile(ddlFilePath)) {
+		try (Connection conn = dataSource.getConnection()) {
 
 			Transactional.inTransaction(conn, c -> {
-				for (String sqlStatement : sqlFile) {
-					try (Statement stmt = c.createStatement()) {
-						stmt.execute(sqlStatement);
+				try (SqlFile sqlFile = new SqlFile(ddlFilePath)) {
+					for (String sqlStatement : sqlFile) {
+						try (Statement stmt = c.createStatement()) {
+							stmt.execute(sqlStatement);
+						}
 					}
 				}
 
@@ -86,7 +87,7 @@ public class DbManager {
 				}
 			});
 
-		} catch (Exception e) {
+		} catch (SQLException | IOException e) {
 			System.err.println("Failed to execute DDL file: " + ddlFilePath);
 			e.printStackTrace();
 		}

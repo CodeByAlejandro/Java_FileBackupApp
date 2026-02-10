@@ -1,5 +1,7 @@
 package org.codebyalejandro.BacMan.database;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -25,29 +27,37 @@ public final class Transactional {
 
 	@FunctionalInterface
 	public interface Transaction {
-		void runSql(Connection conn) throws SQLException;
+		void runSql(Connection conn) throws SQLException, IOException;
 	}
 
 	@FunctionalInterface
 	public interface ReturningTransaction<R> {
-		R runSqlRetrieval(Connection conn) throws SQLException;
+		R runSqlRetrieval(Connection conn) throws SQLException, IOException;
 	}
 
-	public static void inTransaction(Connection conn, Transaction work) throws SQLException {
+	public static void inTransaction(Connection conn, Transaction work) throws SQLException, IOException {
 		inTransaction(conn, c -> {
 			work.runSql(c);
 			return null;
 		});
 	}
 
-	public static <R> R inTransaction(Connection conn, ReturningTransaction<R> work) throws SQLException {
+	public static <R> R inTransaction(Connection conn, ReturningTransaction<R> work) throws SQLException, IOException {
 		boolean previousAutoCommit = conn.getAutoCommit();
 		conn.setAutoCommit(false);
 		try {
 			R result = work.runSqlRetrieval(conn);
 			conn.commit();
 			return result;
-		} catch (SQLException | RuntimeException e) {
+		} catch (SQLException | IOException | RuntimeException e) {
+			try {
+				if (e instanceof UncheckedIOException uncheckedIOException) {
+					throw uncheckedIOException.getCause();
+				}
+			} catch (IOException ioEx) {
+				rollbackQuietly(conn, ioEx);
+				throw ioEx;
+			}
 			rollbackQuietly(conn, e);
 			throw e;
 		} finally {
