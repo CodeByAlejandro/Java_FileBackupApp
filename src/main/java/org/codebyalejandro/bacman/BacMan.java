@@ -1,6 +1,6 @@
-package org.codebyalejandro.BacMan;
+package org.codebyalejandro.bacman;
 
-import org.codebyalejandro.BacMan.database.DbManager;
+import org.codebyalejandro.bacman.database.DbManager;
 
 public class BacMan {
 	public static void main(String[] args) {

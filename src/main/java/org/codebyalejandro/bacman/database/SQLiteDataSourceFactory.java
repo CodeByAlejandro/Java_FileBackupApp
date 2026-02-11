@@ -1,4 +1,4 @@
-package org.codebyalejandro.BacMan.database;
+package org.codebyalejandro.bacman.database;
 
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteDataSource;

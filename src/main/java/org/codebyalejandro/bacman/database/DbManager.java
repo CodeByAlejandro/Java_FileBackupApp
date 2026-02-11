@@ -1,6 +1,6 @@
-package org.codebyalejandro.BacMan.database;
+package org.codebyalejandro.bacman.database;
 
-import org.codebyalejandro.BacMan.database.sql.SqlFile;
+import org.codebyalejandro.bacman.database.sql.SqlFile;
 
 import javax.sql.DataSource;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package org.codebyalejandro.BacMan.database;
+package org.codebyalejandro.bacman.database;
 
 import java.io.IOException;
 import java.sql.Connection;

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.codebyalejandro</groupId>
-    <artifactId>BacMan</artifactId>
+    <artifactId>bacman</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -31,7 +31,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.codebyalejandro.BacMan.BacMan</mainClass>
+                                    <mainClass>org.codebyalejandro.bacman.BacMan</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

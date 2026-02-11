@@ -1,4 +1,4 @@
-package org.codebyalejandro.BacMan;
+package org.codebyalejandro.bacman;
 
 import org.junit.jupiter.api.Test;
 
