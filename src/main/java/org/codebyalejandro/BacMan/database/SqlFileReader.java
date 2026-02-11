@@ -16,7 +16,7 @@ final class SqlFileReader implements Closeable {
 		if (in == null) {
 			throw new IllegalArgumentException("SQL file not found: " + sqlFilePath);
 		}
-		this.reader = new BufferedReader(new InputStreamReader(in));
+		reader = new BufferedReader(new InputStreamReader(in));
 	}
 
 	String readNextStatement() throws IOException {
