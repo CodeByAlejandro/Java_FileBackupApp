@@ -1,5 +1,7 @@
 package org.codebyalejandro.BacMan.database;
 
+import org.codebyalejandro.BacMan.database.sql.SqlFile;
+
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.net.URISyntaxException;

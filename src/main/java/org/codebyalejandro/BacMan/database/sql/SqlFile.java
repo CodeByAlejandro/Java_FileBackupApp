@@ -1,4 +1,4 @@
-package org.codebyalejandro.BacMan.database;
+package org.codebyalejandro.BacMan.database.sql;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -6,6 +6,7 @@ import java.sql.SQLException;
 public class SqlFile implements AutoCloseable {
 	private final String sqlFilePath;
 	private SqlFileReader sqlFileReader;
+	private boolean isClosed = false;
 
 	public SqlFile(String sqlFilePath) {
 		this.sqlFilePath = sqlFilePath;
@@ -29,6 +30,9 @@ public class SqlFile implements AutoCloseable {
 	}
 
 	private void ensureOpen() {
+		if (isClosed) {
+			throw new IllegalStateException("SqlFile is closed and cannot be reused: " + sqlFilePath);
+		}
 		if (sqlFileReader == null) {
 			sqlFileReader = new SqlFileReader(sqlFilePath);
 		}
@@ -36,6 +40,7 @@ public class SqlFile implements AutoCloseable {
 
 	@Override
 	public void close() throws IOException {
+		isClosed = true;
 		if (sqlFileReader != null) {
 			sqlFileReader.close();
 		}
