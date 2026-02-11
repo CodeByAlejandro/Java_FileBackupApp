@@ -65,10 +65,6 @@ final class SqlFileReader implements Closeable {
 		return false;
 	}
 
-	private void setRemainingContentAfterLastStatementEndingChar(String sqlLine, int statementEndingCharIdx) {
-		remainingContentAfterLastStatementEndingChar = sqlLine.substring(statementEndingCharIdx + 1);
-	}
-
 	private static String removeEndingCommentFromSqlLine(String sqlLine) {
 		int inlineCommentIdx = sqlLine.indexOf("--");
 		if (inlineCommentIdx != -1) {
@@ -99,6 +95,10 @@ final class SqlFileReader implements Closeable {
 			}
 		}
 		return inSingleQuotes || inDoubleQuotes;
+	}
+
+	private void setRemainingContentAfterLastStatementEndingChar(String sqlLine, int statementEndingCharIdx) {
+		remainingContentAfterLastStatementEndingChar = sqlLine.substring(statementEndingCharIdx + 1);
 	}
 
 	@Override
