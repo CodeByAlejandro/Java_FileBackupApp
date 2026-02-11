@@ -25,23 +25,23 @@ public final class Transactional {
 	}
 
 	@FunctionalInterface
-	public interface SqlRunnable {
+	interface SqlRunnable {
 		void run() throws SQLException, IOException;
 	}
 
 	@FunctionalInterface
-	public interface DataSupplier<R> {
+	interface DataSupplier<R> {
 		R get() throws SQLException, IOException;
 	}
 
-	public static void inTransaction(Connection conn, SqlRunnable sql) throws SQLException, IOException {
+	static void inTransaction(Connection conn, SqlRunnable sql) throws SQLException, IOException {
 		inTransaction(conn, () -> {
 			sql.run();
 			return null;
 		});
 	}
 
-	public static <R> R inTransaction(Connection conn, DataSupplier<R> supplier) throws SQLException, IOException {
+	static <R> R inTransaction(Connection conn, DataSupplier<R> supplier) throws SQLException, IOException {
 		boolean previousAutoCommit = conn.getAutoCommit();
 		conn.setAutoCommit(false);
 		try {
