@@ -16,7 +16,7 @@ public final class SQLiteDataSourceFactory {
 	private SQLiteDataSourceFactory() {
 	}
 
-	public static DataSource create(Path databasePath) {
+	static DataSource create(Path databasePath) {
 		SQLiteConfig config = new SQLiteConfig();
 
 		// Concurrency-friendly defaults for a multi-threaded app.
