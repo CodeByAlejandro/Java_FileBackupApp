@@ -1,6 +1,5 @@
 package org.codebyalejandro.bacman.database;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -24,31 +23,13 @@ public final class Transactional {
 	private Transactional() {
 	}
 
-	@FunctionalInterface
-	interface SqlRunnable {
-		void run() throws SQLException, IOException;
-	}
-
-	@FunctionalInterface
-	interface DataSupplier<R> {
-		R get() throws SQLException, IOException;
-	}
-
-	static void inTransaction(Connection conn, SqlRunnable sql) throws SQLException, IOException {
-		inTransaction(conn, () -> {
-			sql.run();
-			return null;
-		});
-	}
-
-	static <R> R inTransaction(Connection conn, DataSupplier<R> supplier) throws SQLException, IOException {
+	static void inTransaction(Connection conn, ConnectionConsumer statements) throws SQLException {
 		boolean previousAutoCommit = conn.getAutoCommit();
 		conn.setAutoCommit(false);
 		try {
-			R result = supplier.get();
+			statements.accept(conn);
 			conn.commit();
-			return result;
-		} catch (SQLException | IOException | RuntimeException e) {
+		} catch (SQLException | RuntimeException e) {
 			rollbackQuietly(conn, e);
 			throw e;
 		} finally {

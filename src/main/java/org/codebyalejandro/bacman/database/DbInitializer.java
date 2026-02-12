@@ -1,7 +1,5 @@
 package org.codebyalejandro.bacman.database;
 
-import org.codebyalejandro.bacman.database.sql.SqlFile;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -9,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -37,8 +34,13 @@ public final class DbInitializer {
 			}
 		}
 
-		for (Path migrationFile : migrationFilesToApply) {
-			runDdlFile(MIGRATIONS_DIR + "/" + migrationFile.getFileName().toString());
+		try {
+			for (Path migrationFile : migrationFilesToApply) {
+				database.runDdlFile(MIGRATIONS_DIR + "/" + migrationFile.getFileName().toString());
+			}
+		} catch (SQLException e) {
+			System.err.println("Failed to apply migrations");
+			e.printStackTrace();
 		}
 	}
 
@@ -65,46 +67,14 @@ public final class DbInitializer {
 
 	private Optional<Path> getLastAppliedMigrationFile() {
 		try {
-			return database.withConnection(conn -> {
-				try (Statement stmt = conn.createStatement()) {
-					return stmt.executeQuery(
-							"SELECT migration_file FROM db_migrations ORDER BY applied_at DESC, migration_file DESC LIMIT 1"
-					);
-				}
-			}, rs -> {
-				if (rs.next()) {
-					return Optional.of(Paths.get(rs.getString("migration_file")));
-				} else {
-					return Optional.empty();
-				}
-			});
-		} catch (SQLException | IOException e) {
+			return database.runQuery(
+					"SELECT migration_file FROM db_migrations ORDER BY applied_at DESC, migration_file DESC LIMIT 1",
+					rs -> rs.next() ? Optional.of(Paths.get(rs.getString("migration_file"))) : Optional.empty()
+			);
+		} catch (SQLException e) {
 			System.err.println("Failed to retrieve last applied migration");
 			e.printStackTrace();
 			return Optional.empty();
-		}
-	}
-
-	private void runDdlFile(String ddlFilePath) {
-		try {
-			database.withConnectionAndTransaction(conn -> {
-				try (SqlFile sqlFile = new SqlFile(ddlFilePath)) {
-					sqlFile.forEachStatement(sqlStatement -> {
-						try (Statement stmt = conn.createStatement()) {
-							stmt.execute(sqlStatement);
-						}
-					});
-				}
-
-				try (Statement stmt = conn.createStatement()) {
-					stmt.executeUpdate(
-							"INSERT INTO db_migrations (migration_file) VALUES ('" + ddlFilePath + "')"
-					);
-				}
-			});
-		} catch (SQLException | IOException e) {
-			System.err.println("Failed to execute DDL file: " + ddlFilePath);
-			e.printStackTrace();
 		}
 	}
 }

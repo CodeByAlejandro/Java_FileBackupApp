@@ -24,11 +24,6 @@ public class SqlFile implements AutoCloseable {
 		}
 	}
 
-	@FunctionalInterface
-	public interface StatementConsumer {
-		void accept(String sqlStatement) throws SQLException;
-	}
-
 	private void ensureOpen() {
 		if (isClosed) {
 			throw new IllegalStateException("SqlFile is closed and cannot be reused: " + sqlFilePath);
@@ -44,5 +39,10 @@ public class SqlFile implements AutoCloseable {
 		if (sqlFileReader != null) {
 			sqlFileReader.close();
 		}
+	}
+
+	@FunctionalInterface
+	public interface StatementConsumer {
+		void accept(String sqlStatement) throws SQLException;
 	}
 }
