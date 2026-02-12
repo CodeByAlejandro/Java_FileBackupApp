@@ -1,4 +1,4 @@
-package org.codebyalejandro.bacman.database.sql;
+package org.codebyalejandro.bacman.database;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -8,7 +8,7 @@ public class SqlFile implements AutoCloseable {
 	private SqlFileReader sqlFileReader;
 	private boolean isClosed = false;
 
-	public SqlFile(String sqlFilePath) {
+	SqlFile(String sqlFilePath) {
 		this.sqlFilePath = sqlFilePath;
 	}
 
@@ -17,7 +17,7 @@ public class SqlFile implements AutoCloseable {
 	 *
 	 * <p>This avoids {@link java.util.Iterator} because it can't throw checked {@link IOException}.
 	 */
-	public void forEachStatement(StatementConsumer consumer) throws IOException, SQLException {
+	void forEachStatement(StatementConsumer consumer) throws IOException, SQLException {
 		ensureOpen();
 		for (String stmt; (stmt = sqlFileReader.readNextStatement()) != null; ) {
 			consumer.accept(stmt);
@@ -42,7 +42,7 @@ public class SqlFile implements AutoCloseable {
 	}
 
 	@FunctionalInterface
-	public interface StatementConsumer {
+	interface StatementConsumer {
 		void accept(String sqlStatement) throws SQLException;
 	}
 }

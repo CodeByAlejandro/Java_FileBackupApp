@@ -1,7 +1,5 @@
 package org.codebyalejandro.bacman.database;
 
-import org.codebyalejandro.bacman.database.sql.SqlFile;
-
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Path;

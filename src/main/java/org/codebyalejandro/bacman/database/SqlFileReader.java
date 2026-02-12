@@ -1,4 +1,4 @@
-package org.codebyalejandro.bacman.database.sql;
+package org.codebyalejandro.bacman.database;
 
 import java.io.*;
 
