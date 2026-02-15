@@ -12,9 +12,9 @@ final class SqlFileReader implements Closeable {
 	private String remainingContentAfterLastStatementEndingChar;
 
 	SqlFileReader(String sqlFilePath) {
-		InputStream in = getClass().getClassLoader().getResourceAsStream(sqlFilePath);
+		InputStream in = SqlFileReader.class.getResourceAsStream(sqlFilePath);
 		if (in == null) {
-			throw new IllegalArgumentException("SQL file not found: " + sqlFilePath);
+			throw new IllegalStateException("SQL file not found: " + sqlFilePath);
 		}
 		reader = new BufferedReader(new InputStreamReader(in));
 	}

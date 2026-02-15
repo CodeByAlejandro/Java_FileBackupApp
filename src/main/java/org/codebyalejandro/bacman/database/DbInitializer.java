@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public final class DbInitializer {
-	private static final String MIGRATIONS_DIR = "db/migrations";
+	private static final String MIGRATIONS_DIR = "/db/migrations";
 
 	private final Database database;
 
@@ -45,7 +45,7 @@ public final class DbInitializer {
 	}
 
 	private static List<Path> listMigrationFiles() {
-		URL dirUrl = Database.class.getClassLoader().getResource(MIGRATIONS_DIR);
+		URL dirUrl = Database.class.getResource(MIGRATIONS_DIR);
 		if (dirUrl == null) {
 			throw new IllegalStateException("Resource directory not found: " + MIGRATIONS_DIR);
 		}
