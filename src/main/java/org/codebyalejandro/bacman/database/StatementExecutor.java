@@ -1,5 +1,8 @@
 package org.codebyalejandro.bacman.database;
 
+import org.codebyalejandro.bacman.database.functional.PreparedStatementConsumer;
+import org.codebyalejandro.bacman.database.functional.ResultSetMapperFunction;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -18,13 +21,13 @@ public class StatementExecutor {
 		}
 	}
 
-	public <R> R runQuery(String sql, Database.ResultSetMapperFunction<R> resultMapper) throws SQLException {
+	public <R> R runQuery(String sql, ResultSetMapperFunction<R> resultMapper) throws SQLException {
 		try (var stmt = connection.createStatement(); var rs = stmt.executeQuery(sql)) {
 			return resultMapper.apply(rs);
 		}
 	}
 
-	public <R> R runQuery(String sql, Database.PreparedStatementConsumer stmtConsumer, Database.ResultSetMapperFunction<R> resultMapper) throws SQLException {
+	public <R> R runQuery(String sql, PreparedStatementConsumer stmtConsumer, ResultSetMapperFunction<R> resultMapper) throws SQLException {
 		try (var stmt = connection.prepareStatement(sql)) {
 			stmtConsumer.accept(stmt);
 			try (var rs = stmt.executeQuery()) {
@@ -39,7 +42,7 @@ public class StatementExecutor {
 		}
 	}
 
-	public int runUpdate(String sql, Database.PreparedStatementConsumer stmtConsumer) throws SQLException {
+	public int runUpdate(String sql, PreparedStatementConsumer stmtConsumer) throws SQLException {
 		try (var stmt = connection.prepareStatement(sql)) {
 			stmtConsumer.accept(stmt);
 			return stmt.executeUpdate();

@@ -1,10 +1,11 @@
 package org.codebyalejandro.bacman.database;
 
+import org.codebyalejandro.bacman.database.functional.PreparedStatementConsumer;
+import org.codebyalejandro.bacman.database.functional.ResultSetMapperFunction;
+
 import javax.sql.DataSource;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Database {
@@ -22,16 +23,6 @@ public class Database {
 
 	public DataSource getDataSource() {
 		return dataSource;
-	}
-
-	@FunctionalInterface
-	public interface PreparedStatementConsumer {
-		void accept(PreparedStatement stmt) throws SQLException;
-	}
-
-	@FunctionalInterface
-	public interface ResultSetMapperFunction<R> {
-		R apply(ResultSet rs) throws SQLException;
 	}
 
 	public void runStatement(String sql) throws SQLException {
