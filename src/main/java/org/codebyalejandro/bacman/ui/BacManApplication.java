@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.codebyalejandro.bacman.database.Database;
-import org.codebyalejandro.bacman.database.DbInitializer;
+import org.flywaydb.core.Flyway;
 
 import java.io.IOException;
 
@@ -13,9 +13,11 @@ public class BacManApplication extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws IOException {
-		Database database = new Database();
-		DbInitializer dbInitializer = new DbInitializer(database);
-		dbInitializer.initializeDataBase();
+		Database database = new Database("BacMan.db");
+		Flyway flyway = Flyway.configure()
+				.dataSource(database.getDataSource())
+				.load();
+		flyway.migrate();
 
 		FXMLLoader fxmlLoader = new FXMLLoader(BacManApplication.class.getResource("/view/main-view.fxml"));
 		Scene scene = new Scene(fxmlLoader.load(), 320, 240);
