@@ -1,9 +1,8 @@
 package org.codebyalejandro.bacman.database;
 
-import org.codebyalejandro.bacman.database.functional.PreparedStatementConsumer;
-import org.codebyalejandro.bacman.database.functional.ResultSetMapperFunction;
-
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.codebyalejandro.bacman.core.Validation.requireNonNull;
@@ -13,6 +12,16 @@ public class StatementExecutor {
 
 	StatementExecutor(Connection connection) {
 		this.connection = requireNonNull(connection, "connection");
+	}
+
+	@FunctionalInterface
+	public interface PreparedStatementConsumer {
+		void accept(PreparedStatement stmt) throws SQLException;
+	}
+
+	@FunctionalInterface
+	public interface ResultSetMapperFunction<R> {
+		R apply(ResultSet rs) throws SQLException;
 	}
 
 	public void runStatement(String sql) throws SQLException {
@@ -27,7 +36,10 @@ public class StatementExecutor {
 		}
 	}
 
-	public <R> R runQuery(String sql, PreparedStatementConsumer stmtConsumer, ResultSetMapperFunction<R> resultMapper) throws SQLException {
+	public <R> R runQuery(
+			String sql,
+			PreparedStatementConsumer stmtConsumer,
+			ResultSetMapperFunction<R> resultMapper) throws SQLException {
 		try (var stmt = connection.prepareStatement(sql)) {
 			stmtConsumer.accept(stmt);
 			try (var rs = stmt.executeQuery()) {

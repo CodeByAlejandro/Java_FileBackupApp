@@ -1,8 +1,5 @@
 package org.codebyalejandro.bacman.database;
 
-import org.codebyalejandro.bacman.database.functional.PreparedStatementConsumer;
-import org.codebyalejandro.bacman.database.functional.ResultSetMapperFunction;
-
 import javax.sql.DataSource;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,13 +28,16 @@ public class Database {
 		}
 	}
 
-	public <R> R runQuery(String sql, ResultSetMapperFunction<R> resultMapper) throws SQLException {
+	public <R> R runQuery(String sql, StatementExecutor.ResultSetMapperFunction<R> resultMapper) throws SQLException {
 		try (var conn = dataSource.getConnection()) {
 			return new StatementExecutor(conn).runQuery(sql, resultMapper);
 		}
 	}
 
-	public <R> R runQuery(String sql, PreparedStatementConsumer stmtConsumer, ResultSetMapperFunction<R> resultMapper) throws SQLException {
+	public <R> R runQuery(
+			String sql,
+			StatementExecutor.PreparedStatementConsumer stmtConsumer,
+			StatementExecutor.ResultSetMapperFunction<R> resultMapper) throws SQLException {
 		try (var conn = dataSource.getConnection()) {
 			return new StatementExecutor(conn).runQuery(sql, stmtConsumer, resultMapper);
 		}
@@ -49,7 +49,7 @@ public class Database {
 		}
 	}
 
-	public int runUpdate(String sql, PreparedStatementConsumer stmtConsumer) throws SQLException {
+	public int runUpdate(String sql, StatementExecutor.PreparedStatementConsumer stmtConsumer) throws SQLException {
 		try (var conn = dataSource.getConnection()) {
 			return new StatementExecutor(conn).runUpdate(sql, stmtConsumer);
 		}
