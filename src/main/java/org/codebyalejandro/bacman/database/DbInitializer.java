@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public final class DbInitializer {
-	private static final String MIGRATIONS_DIR = "/db/migrations";
+	private static final String MIGRATIONS_DIR = "/db/migration";
 
 	private final Database database;
 
