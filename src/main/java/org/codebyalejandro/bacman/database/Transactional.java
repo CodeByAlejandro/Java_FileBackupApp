@@ -23,17 +23,45 @@ public final class Transactional {
 	private Transactional() {
 	}
 
+	@FunctionalInterface
+	interface ConnectionConsumer {
+		void accept(Connection conn) throws SQLException;
+	}
+
+	@FunctionalInterface
+	interface ConnectionFunction<R> {
+		R apply(Connection conn) throws SQLException;
+	}
+
 	static void inTransaction(Connection conn, ConnectionConsumer statements) throws SQLException {
+		inTransaction(conn, connection -> {
+			statements.accept(connection);
+			return null;
+		});
+	}
+
+	static <R> R inTransaction(Connection conn, ConnectionFunction<R> statements) throws SQLException {
 		boolean previousAutoCommit = conn.getAutoCommit();
 		conn.setAutoCommit(false);
+		Throwable primary = null;
 		try {
-			statements.accept(conn);
+			R result = statements.apply(conn);
 			conn.commit();
+			return result;
 		} catch (SQLException | RuntimeException e) {
+			primary = e;
 			rollbackQuietly(conn, e);
 			throw e;
 		} finally {
-			conn.setAutoCommit(previousAutoCommit);
+			try {
+				conn.setAutoCommit(previousAutoCommit);
+			} catch (SQLException e) {
+				if (primary != null) {
+					primary.addSuppressed(e);
+				} else {
+					throw e;
+				}
+			}
 		}
 	}
 

@@ -1,99 +1,27 @@
 package org.codebyalejandro.bacman.database;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Database {
-	private final Path databasePath;
+	private final Path path;
 	private final DataSource dataSource;
 
-	public Database() {
-		this(Paths.get("BacMan.db"));
-	}
-
-	public Database(Path databasePath) {
-		this(databasePath, SQLiteDataSourceFactory.create(databasePath));
-	}
-
-	public Database(Path databasePath, DataSource dataSource) {
-		this.databasePath = databasePath;
-		this.dataSource = dataSource;
+	public Database(String pathString) {
+		path = Paths.get(pathString);
+		dataSource = SQLiteDataSourceFactory.create(path);
 	}
 
 	public Path getDatabasePath() {
-		return databasePath;
+		return path;
 	}
 
-	public void runStatement(String sql) throws SQLException {
-		try (var conn = dataSource.getConnection();
-			 var stmt = conn.createStatement()) {
-			stmt.execute(sql);
-		}
-	}
-
-	public <R> R runQuery(String sql, ResultSetMapperFunction<R> resultMapper) throws SQLException {
-		try (var conn = dataSource.getConnection();
-			 var stmt = conn.createStatement();
-			 var rs = stmt.executeQuery(sql)) {
-			return resultMapper.apply(rs);
-		}
-	}
-
-	public <R> R runQuery(String sql, PreparedStatementConsumer stmtConsumer, ResultSetMapperFunction<R> resultMapper) throws SQLException {
-		try (var conn = dataSource.getConnection();
-			 var stmt = conn.prepareStatement(sql)) {
-			stmtConsumer.accept(stmt);
-			try (var rs = stmt.executeQuery()) {
-				return resultMapper.apply(rs);
-			}
-		}
-	}
-
-	public int runUpdate(String sql) throws SQLException {
-		try (var conn = dataSource.getConnection();
-			 var stmt = conn.createStatement()) {
-			return stmt.executeUpdate(sql);
-		}
-	}
-
-	public int runUpdate(String sql, PreparedStatementConsumer stmtConsumer) throws SQLException {
-		try (var conn = dataSource.getConnection();
-			 var stmt = conn.prepareStatement(sql)) {
-			stmtConsumer.accept(stmt);
-			return stmt.executeUpdate();
-		}
-	}
-
-	public void inTransaction(ConnectionConsumer statements) throws SQLException {
-		try (var conn = dataSource.getConnection()) {
-			Transactional.inTransaction(conn, statements);
-		}
-	}
-
-	public void runDdlFile(String ddlFilePath) throws SQLException {
-		inTransaction(connection -> runDdlFile(ddlFilePath, connection));
-	}
-
-	private void runDdlFile(String ddlFilePath, Connection conn) throws SQLException {
-		try (var sqlFile = new SqlFile(ddlFilePath)) {
-			sqlFile.forEachStatement(sqlStatement -> {
-				try (var stmt = conn.createStatement()) {
-					stmt.execute(sqlStatement);
-				}
-			});
-			try (var stmt = conn.prepareStatement("INSERT INTO db_migrations (migration_file) VALUES (?)")) {
-				stmt.setString(1, ddlFilePath);
-				stmt.executeUpdate();
-			}
-		} catch (SQLException | IOException e) {
-			throw new SQLException("Failed to run DDL file: " + ddlFilePath, e);
-		}
+	public DataSource getDataSource() {
+		return dataSource;
 	}
 
 	@FunctionalInterface
@@ -104,5 +32,59 @@ public class Database {
 	@FunctionalInterface
 	public interface ResultSetMapperFunction<R> {
 		R apply(ResultSet rs) throws SQLException;
+	}
+
+	public void runStatement(String sql) throws SQLException {
+		try (var conn = dataSource.getConnection()) {
+			new StatementExecutor(conn).runStatement(sql);
+		}
+	}
+
+	public <R> R runQuery(String sql, ResultSetMapperFunction<R> resultMapper) throws SQLException {
+		try (var conn = dataSource.getConnection()) {
+			return new StatementExecutor(conn).runQuery(sql, resultMapper);
+		}
+	}
+
+	public <R> R runQuery(String sql, PreparedStatementConsumer stmtConsumer, ResultSetMapperFunction<R> resultMapper) throws SQLException {
+		try (var conn = dataSource.getConnection()) {
+			return new StatementExecutor(conn).runQuery(sql, stmtConsumer, resultMapper);
+		}
+	}
+
+	public int runUpdate(String sql) throws SQLException {
+		try (var conn = dataSource.getConnection()) {
+			return new StatementExecutor(conn).runUpdate(sql);
+		}
+	}
+
+	public int runUpdate(String sql, PreparedStatementConsumer stmtConsumer) throws SQLException {
+		try (var conn = dataSource.getConnection()) {
+			return new StatementExecutor(conn).runUpdate(sql, stmtConsumer);
+		}
+	}
+
+	@FunctionalInterface
+	public interface StatementExecutorConsumer {
+		void accept(StatementExecutor stmtExecutor) throws SQLException;
+	}
+
+	public void inTranaction(StatementExecutorConsumer stmtExecutorConsumer) throws SQLException {
+		try (var conn = dataSource.getConnection()) {
+			Transactional.inTransaction(conn, (Transactional.ConnectionConsumer)
+					connection -> stmtExecutorConsumer.accept(new StatementExecutor(connection)));
+		}
+	}
+
+	@FunctionalInterface
+	public interface StatementExecutorFunction<R> {
+		R apply(StatementExecutor stmtExecutor) throws SQLException;
+	}
+
+	public <R> R inTranaction(StatementExecutorFunction<R> stmtExecutorFunction) throws SQLException {
+		try (var conn = dataSource.getConnection()) {
+			return Transactional.inTransaction(conn, (Transactional.ConnectionFunction<R>)
+					connection -> stmtExecutorFunction.apply(new StatementExecutor(connection)));
+		}
 	}
 }
