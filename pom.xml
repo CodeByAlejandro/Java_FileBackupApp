@@ -30,9 +30,9 @@
                             <mainClass>
                                 org.codebyalejandro.bacman/org.codebyalejandro.bacman.ui.BacManApplication
                             </mainClass>
-                            <launcher>app</launcher>
-                            <jlinkZipName>app</jlinkZipName>
-                            <jlinkImageName>app</jlinkImageName>
+                            <launcher>BacMan</launcher>
+                            <jlinkZipName>BacMan</jlinkZipName>
+                            <jlinkImageName>BacMan</jlinkImageName>
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
