@@ -1,25 +1,20 @@
-package org.codebyalejandro.bacman.database;
+package org.codebyalejandro.bacman.persistence;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Optional;
 
-/**
- * Reads SQL statements from a classpath resource, splitting on semicolons that are not inside quotes.
- *
- * <p>Returns {@code null} on EOF.
- */
-final class SqlFileReader implements Closeable {
+final class SqlFileReader implements AutoCloseable {
 	private final BufferedReader reader;
 	private String remainingContentAfterLastStatementEndingChar;
 
-	SqlFileReader(String sqlFilePath) {
-		InputStream in = SqlFileReader.class.getResourceAsStream(sqlFilePath);
-		if (in == null) {
-			throw new IllegalStateException("SQL file not found: " + sqlFilePath);
-		}
+	SqlFileReader(InputStream in) {
 		reader = new BufferedReader(new InputStreamReader(in));
 	}
 
-	String readNextStatement() throws IOException {
+	Optional<String> readNextStatement() throws IOException {
 		boolean statementComplete = false;
 		StringBuilder statementBuilder = new StringBuilder();
 
@@ -35,7 +30,7 @@ final class SqlFileReader implements Closeable {
 			statementComplete = parseSqlLine(trimmedLine, statementBuilder);
 		}
 
-		return statementComplete ? statementBuilder.toString() : null;
+		return statementComplete ? Optional.of(statementBuilder.toString()) : Optional.empty();
 	}
 
 	private String fetchNextSqlLine() throws IOException {

@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.codebyalejandro.bacman.database.Database;
+import org.codebyalejandro.bacman.persistence.Database;
 import org.flywaydb.core.Flyway;
 
 import java.io.IOException;

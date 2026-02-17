@@ -1,4 +1,4 @@
-package org.codebyalejandro.bacman.database;
+package org.codebyalejandro.bacman.persistence;
 
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteDataSource;

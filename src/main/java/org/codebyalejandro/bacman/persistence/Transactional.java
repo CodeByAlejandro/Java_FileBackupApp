@@ -1,4 +1,4 @@
-package org.codebyalejandro.bacman.database;
+package org.codebyalejandro.bacman.persistence;
 
 import java.sql.Connection;
 import java.sql.SQLException;
