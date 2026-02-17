@@ -19,7 +19,7 @@ import java.sql.SQLException;
  *   <li>autoCommit is restored to its previous value</li>
  * </ul>
  */
-public final class Transactional {
+final class Transactional {
 	private Transactional() {
 	}
 

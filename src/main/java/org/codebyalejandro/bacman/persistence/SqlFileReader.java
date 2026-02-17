@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Optional;
 
-final class SqlFileReader implements AutoCloseable {
+class SqlFileReader implements AutoCloseable {
 	private final BufferedReader reader;
 	private String remainingContentAfterLastStatementEndingChar;
 

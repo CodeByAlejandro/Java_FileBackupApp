@@ -12,7 +12,7 @@ import java.nio.file.Path;
  * <p>Key idea: you don't want PRAGMA/config scattered across the codebase.
  * A DataSource lets you standardize connection creation and (optionally) pool later.
  */
-public final class SQLiteDataSourceFactory {
+final class SQLiteDataSourceFactory {
 	private SQLiteDataSourceFactory() {
 	}
 
