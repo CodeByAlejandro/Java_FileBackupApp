@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Explicit includes are more reliable than includeAll under JPMS because includeAll needs directory listing. -->
+    <include file="db/migration/V1__add_table_global_config.sql" relativeToChangelogFile="false"/>
+    <include file="db/migration/V2__add_table_backups.sql" relativeToChangelogFile="false"/>
+    <include file="db/migration/V3__add_table_snapshots.sql" relativeToChangelogFile="false"/>
+    <include file="db/migration/V4__add_table_files.sql" relativeToChangelogFile="false"/>
+    <include file="db/migration/V5__add_table_path_filters.sql" relativeToChangelogFile="false"/>
+    <include file="db/migration/V6__add_table_snapshot_configs.sql" relativeToChangelogFile="false"/>
+    <include file="db/migration/V7__add_table_schedules.sql" relativeToChangelogFile="false"/>
+
+</databaseChangeLog>
