@@ -29,6 +29,9 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <!-- NOTE: Shade's MinijarFilter uses an embedded ASM that currently can't read Java 25 (class file major 69).
+                                 Keep shading, but disable minimization to avoid "Unsupported class file major version 69". -->
+                            <minimizeJar>false</minimizeJar>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
