@@ -6,7 +6,6 @@ import org.codebyalejandro.bacman.persistence.function.StatementExecutorConsumer
 import org.codebyalejandro.bacman.persistence.function.StatementExecutorFunction;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -49,7 +48,7 @@ public class Database {
 		}
 	}
 
-	public <R> R runQueryFromSqlResource(String sqlResourcePath, ResultSetMapperFunction<R> resultMapper) throws IOException, SQLException {
+	public <R> R runQueryFromSqlResource(String sqlResourcePath, ResultSetMapperFunction<R> resultMapper) throws SQLException {
 		try (var conn = dataSource.getConnection()) {
 			return new StatementExecutor(conn).runQueryFromSqlResource(sqlResourcePath, resultMapper);
 		}
@@ -58,7 +57,7 @@ public class Database {
 	public <R> R runQueryFromSqlResource(
 			String sqlResourcePath,
 			PreparedStatementConsumer stmtConsumer,
-			ResultSetMapperFunction<R> resultMapper) throws IOException, SQLException {
+			ResultSetMapperFunction<R> resultMapper) throws SQLException {
 		try (var conn = dataSource.getConnection()) {
 			return new StatementExecutor(conn).runQueryFromSqlResource(sqlResourcePath, stmtConsumer, resultMapper);
 		}
@@ -88,5 +87,14 @@ public class Database {
 			return Transactional.inTransaction(conn, (Transactional.ConnectionFunction<R>)
 					connection -> stmtExecutorFunction.apply(new StatementExecutor(connection)));
 		}
+	}
+
+	public void runStatementsFromSqlResource(String sqlResourcePath) throws SQLException {
+		inTranaction(stmtExecutor -> {
+			stmtExecutor.runStatementsFromSqlResource(sqlResourcePath);
+			var migrationFileName = Paths.get(sqlResourcePath).getFileName().toString();
+			stmtExecutor.runUpdate("INSERT INTO db_migrations (migration_file) VALUES (?)",
+					stmt -> stmt.setString(1, migrationFileName));
+		});
 	}
 }

@@ -42,7 +42,7 @@ public class StatementExecutor {
 		}
 	}
 
-	public <R> R runQueryFromSqlResource(String sqlResourcePath, ResultSetMapperFunction<R> resultMapper) throws IOException, SQLException {
+	public <R> R runQueryFromSqlResource(String sqlResourcePath, ResultSetMapperFunction<R> resultMapper) throws SQLException {
 		var sql = readStatementFromSqlResource(sqlResourcePath);
 		return runQuery(sql, resultMapper);
 	}
@@ -50,12 +50,12 @@ public class StatementExecutor {
 	public <R> R runQueryFromSqlResource(
 			String sqlResourcePath,
 			PreparedStatementConsumer stmtConsumer,
-			ResultSetMapperFunction<R> resultMapper) throws IOException, SQLException {
+			ResultSetMapperFunction<R> resultMapper) throws SQLException {
 		var sql = readStatementFromSqlResource(sqlResourcePath);
 		return runQuery(sql, stmtConsumer, resultMapper);
 	}
 
-	private String readStatementFromSqlResource(String sqlResourcePath) throws IOException {
+	private String readStatementFromSqlResource(String sqlResourcePath) throws SQLException {
 		InputStream in = StatementExecutor.class.getResourceAsStream(sqlResourcePath);
 		if (in == null) {
 			throw new IllegalStateException("SQL resource not found on classpath: " + sqlResourcePath);
@@ -63,9 +63,11 @@ public class StatementExecutor {
 		Optional<String> sqlOpt;
 		try (var sqlFileReader = new SqlFileReader(in)) {
 			sqlOpt = sqlFileReader.readNextStatement();
+		} catch (IOException e) {
+			throw new SQLException("Error reading SQL resource: " + sqlResourcePath, e);
 		}
-		sqlOpt.orElseThrow(() -> new IllegalStateException("SQL resource does not contain a valid statement: " + sqlResourcePath));
-		return sqlOpt.get();
+		return sqlOpt.orElseThrow(() ->
+				new IllegalStateException("SQL resource does not contain a valid statement: " + sqlResourcePath));
 	}
 
 	public int runUpdate(String sql) throws SQLException {
@@ -78,6 +80,18 @@ public class StatementExecutor {
 		try (var stmt = connection.prepareStatement(sql)) {
 			stmtConsumer.accept(stmt);
 			return stmt.executeUpdate();
+		}
+	}
+
+	public void runStatementsFromSqlResource(String sqlResourcePath) throws SQLException {
+		InputStream in = StatementExecutor.class.getResourceAsStream(sqlResourcePath);
+		if (in == null) {
+			throw new IllegalStateException("SQL resource not found on classpath: " + sqlResourcePath);
+		}
+		try (var sqlFile = new SqlFile(new SqlFileReader(in))) {
+			sqlFile.forEachStatement(this::runStatement);
+		} catch (IOException e) {
+			throw new SQLException("Error reading SQL resource: " + sqlResourcePath, e);
 		}
 	}
 }
