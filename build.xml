@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun" default="generate-migration-index">
+    <target name="generate-migration-index">
+        <property name="migration.dir.part" value="db/migration"/>
+        <property name="migration.index.file.name" value="migration_index.txt"/>
+
+        <property name="migration.resources.dir"
+                  value="${project.basedir}/src/main/resources/${migration.dir.part}"/>
+        <property name="generated.resources.migration.dir"
+                  value="${project.build.directory}/generated-resources/${migration.dir.part}"/>
+        <property name="generated.resources.migration.index"
+                  value="${generated.resources.migration.dir}/${migration.index.file.name}"/>
+        <property name="output.migration.dir"
+                  value="${project.build.outputDirectory}/${migration.dir.part}"/>
+        <property name="output.migration.index"
+                  value="${output.migration.dir}/${migration.index.file.name}"/>
+
+        <mkdir dir="${generated.resources.migration.dir}"/>
+        <mkdir dir="${output.migration.dir}"/>
+
+        <path id="migration.files">
+            <fileset dir="${migration.resources.dir}">
+                <include name="**/*.sql"/>
+            </fileset>
+        </path>
+
+        <pathconvert property="migration.files.mapped.classpath" refid="migration.files"
+                     pathsep="${line.separator}">
+            <regexpmapper from="^.*/src/main/resources/(.*)$"
+                          to="\1"
+                          handledirsep="true"/>
+        </pathconvert>
+
+        <echo file="${generated.resources.migration.index}"
+              message="${migration.files.mapped.classpath}${line.separator}"/>
+        <echo file="${output.migration.index}"
+              message="${migration.files.mapped.classpath}${line.separator}"/>
+    </target>
+</project>

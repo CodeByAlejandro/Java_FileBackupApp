@@ -44,7 +44,7 @@ public class MigrationManager {
 	}
 
 	private List<String> listMigrationFiles() {
-		URL dirUrl = Database.class.getResource(migrationsResourcePath);
+		URL dirUrl = MigrationManager.class.getResource(migrationsResourcePath);
 		if (dirUrl == null) {
 			throw new IllegalStateException("Resource directory not found: " + migrationsResourcePath);
 		}
