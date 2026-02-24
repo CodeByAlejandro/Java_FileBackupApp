@@ -32,6 +32,7 @@
                         <configuration>
                             <target name="generate-migration-index">
                                 <ant antfile="${project.basedir}/build.xml" target="generate-migration-index">
+                                    <!-- Pass necessary Maven properties to the Ant script. -->
                                     <property name="project.basedir" value="${project.basedir}"/>
                                     <property name="project.build.directory" value="${project.build.directory}"/>
                                 </ant>
