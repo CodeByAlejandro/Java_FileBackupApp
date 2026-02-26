@@ -92,9 +92,9 @@ public class Database {
 	public void runStatementsFromSqlResource(String sqlResourcePath) throws SQLException {
 		inTranaction(stmtExecutor -> {
 			stmtExecutor.runStatementsFromSqlResource(sqlResourcePath);
-			var migrationFileName = Paths.get(sqlResourcePath).getFileName().toString();
+			var sqlResource = new ClassPathResource(sqlResourcePath);
 			stmtExecutor.runUpdate("INSERT INTO db_migrations (migration_file) VALUES (?)",
-					stmt -> stmt.setString(1, migrationFileName));
+					stmt -> stmt.setString(1, sqlResource.toString()));
 		});
 	}
 }

@@ -1,74 +1,72 @@
 package org.codebyalejandro.bacman.persistence;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class MigrationManager {
+	private static final ClassPathResource MIGRATION_INDEX = new ClassPathResource("migration_index.txt");
+
 	private final Database database;
-	private final String migrationsResourcePath;
+	private final ClassPathResource migrationsResourcePath;
 
 	public MigrationManager(Database database, String migrationsResourcePath) {
 		this.database = database;
-		this.migrationsResourcePath = migrationsResourcePath;
+		this.migrationsResourcePath = new ClassPathResource(migrationsResourcePath);
 	}
 
 	public void migrate() {
-		var allMigrationFiles = listMigrationFiles();
-		var migrationFilesToApply = new ArrayList<>(allMigrationFiles);
-
 		try {
+			var allMigrations = listMigrationResources();
+			var migrationsToApply = new ArrayList<>(allMigrations);
+
 			if (Files.isRegularFile(database.getDatabasePath())) {
-				var lastAppliedMigrationFileOpt = getLastAppliedMigrationFile();
-				lastAppliedMigrationFileOpt.ifPresent(lastAppliedMigrationFileName ->
-						migrationFilesToApply.removeIf(filename ->
-								filename.compareTo(lastAppliedMigrationFileName) <= 0));
+				var lastAppliedMigrationResourceOpt = getLastAppliedMigrationResource();
+				lastAppliedMigrationResourceOpt.ifPresent(lastAppliedMigrationResource ->
+						migrationsToApply.removeIf(migrationResource ->
+								migrationResource.compareTo(lastAppliedMigrationResource) <= 0));
 			}
 
-			for (var migrationFileName : migrationFilesToApply) {
-				System.out.println("Applying migration file: " + migrationFileName);
-				database.runStatementsFromSqlResource(migrationsResourcePath + "/" + migrationFileName);
+			for (var migrationResource : migrationsToApply) {
+				System.out.println("Applying migration file: " + migrationResource);
+				database.runStatementsFromSqlResource(migrationResource.toString());
 			}
-		} catch (SQLException e) {
+		} catch (IOException | SQLException e) {
 			System.err.println("Failed to apply migrations");
 			e.printStackTrace();
 		}
 	}
 
-	private List<String> listMigrationFiles() {
-		URL dirUrl = MigrationManager.class.getResource(migrationsResourcePath);
-		if (dirUrl == null) {
-			throw new IllegalStateException("Resource directory not found: " + migrationsResourcePath);
+	private List<ClassPathResource> listMigrationResources() throws IOException {
+		var migrationIndexResourcePath = migrationsResourcePath.resolve(MIGRATION_INDEX);
+		InputStream in = getClass().getClassLoader().getResourceAsStream(migrationIndexResourcePath.toString());
+		if (in == null) {
+			throw new IllegalStateException("Migration index not found: " + migrationIndexResourcePath);
 		}
-
-		try {
-			Path dir = Paths.get(dirUrl.toURI());
-
-			try (Stream<Path> stream = Files.list(dir)) {
-				return stream
-						.filter(Files::isRegularFile)
-						.map(path -> path.getFileName().toString())
-						.filter(filename -> filename.endsWith(".sql"))
-						.sorted()
-						.toList();
+		try (var reader = new BufferedReader(new InputStreamReader(in))) {
+			var migrationFiles = new ArrayList<ClassPathResource>();
+			for (String line; (line = reader.readLine()) != null; ) {
+				line = line.trim();
+				if (!line.isEmpty() && !line.startsWith("#")) {
+					migrationFiles.add(new ClassPathResource(line));
+				}
 			}
-		} catch (URISyntaxException | IOException e) {
-			throw new RuntimeException("Failed to list migration files", e);
+			return migrationFiles;
 		}
 	}
 
-	private Optional<String> getLastAppliedMigrationFile() throws SQLException {
+	private Optional<ClassPathResource> getLastAppliedMigrationResource() throws SQLException {
 		return database.runQuery(
 				"SELECT migration_file FROM db_migrations ORDER BY applied_at DESC, migration_file DESC LIMIT 1",
-				rs -> rs.next() ? Optional.of(rs.getString("migration_file")) : Optional.empty()
+				rs -> rs.next()
+						? Optional.of(new ClassPathResource(rs.getString("migration_file")))
+						: Optional.empty()
 		);
 	}
 }

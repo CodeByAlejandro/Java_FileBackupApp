@@ -14,7 +14,7 @@ public class BacManApplication extends Application {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 		var database = new Database("BacMan.db");
-		var migrationManager = new MigrationManager(database, "/db/migration");
+		var migrationManager = new MigrationManager(database, "db/migration");
 		migrationManager.migrate();
 
 		FXMLLoader fxmlLoader = new FXMLLoader(BacManApplication.class.getResource("/view/main-view.fxml"));
