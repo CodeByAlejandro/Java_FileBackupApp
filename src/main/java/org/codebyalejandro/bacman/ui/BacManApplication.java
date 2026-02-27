@@ -10,13 +10,15 @@ import org.codebyalejandro.bacman.persistence.MigrationManager;
 import java.io.IOException;
 
 public class BacManApplication extends Application {
-
 	@Override
-	public void start(Stage primaryStage) throws IOException {
+	public void init() {
 		var database = new Database("BacMan.db");
 		var migrationManager = new MigrationManager(database, "db/migration");
 		migrationManager.migrate();
+	}
 
+	@Override
+	public void start(Stage primaryStage) throws IOException {
 		FXMLLoader fxmlLoader = new FXMLLoader(BacManApplication.class.getResource("/view/main-view.fxml"));
 		Scene scene = new Scene(fxmlLoader.load(), 320, 240);
 		primaryStage.setTitle("Hello!");
